@@ -58,7 +58,7 @@ func (l *MuxWriter) SetFd(fd *os.File) {
 }
 
 // create a FileLogWriter returning as LoggerInterface.
-func NewFileWriter() *FileLogWriter {
+func newFileWriter() *FileLogWriter {
 	w := &FileLogWriter{
 		FileLogConfig: FileLogConfig{
 			Path:     "",

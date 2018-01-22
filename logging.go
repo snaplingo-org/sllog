@@ -55,7 +55,7 @@ FileLogConfig{
 */
 func Init(config FileLogConfig) {
 	os.MkdirAll(config.Path, 0777)
-	hook, err := NewFileHook(config)
+	hook, err := newFileHook(config)
 	if err != nil {
 		logger.Error(err)
 	}

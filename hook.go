@@ -14,12 +14,12 @@ type FileHook struct {
 	W *FileLogWriter
 }
 
-func NewFileHook(conf FileLogConfig) (hook logrus.Hook, err error) {
+func newFileHook(conf FileLogConfig) (hook logrus.Hook, err error) {
 	path := strings.Split(conf.Filename, "/")
 	if len(path) > 1 {
 		exec.Command("mkdir", path[0]).Run()
 	}
-	w := NewFileWriter()
+	w := newFileWriter()
 	if err = w.Init(conf); err != nil {
 		return
 	}
