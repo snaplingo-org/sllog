@@ -10,8 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type FileHook struct {
-	W *FileLogWriter
+type fileHook struct {
+	W *fileLogWriter
 }
 
 func newFileHook(conf FileLogConfig) (hook logrus.Hook, err error) {
@@ -23,11 +23,11 @@ func newFileHook(conf FileLogConfig) (hook logrus.Hook, err error) {
 	if err = w.Init(conf); err != nil {
 		return
 	}
-	hook = &FileHook{W: w}
+	hook = &fileHook{W: w}
 	return
 }
 
-func (p *FileHook) Fire(entry *logrus.Entry) (err error) {
+func (p *fileHook) Fire(entry *logrus.Entry) (err error) {
 	message, err := getMessage(entry)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to read entry, %v", err)
@@ -53,7 +53,7 @@ func (p *FileHook) Fire(entry *logrus.Entry) (err error) {
 	return
 }
 
-func (p *FileHook) Levels() []logrus.Level {
+func (p *fileHook) Levels() []logrus.Level {
 	return []logrus.Level{
 		logrus.PanicLevel,
 		logrus.FatalLevel,

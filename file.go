@@ -25,17 +25,17 @@ type FileLogConfig struct {
 }
 
 // an *os.File writer with locker.
-type MuxWriter struct {
+type muxWriter struct {
 	sync.Mutex
 	fd *os.File
 }
 
 // FileLogWriter implements LoggerInterface.
 // It writes messages by lines limit, file size limit, or time frequency.
-type FileLogWriter struct {
+type fileLogWriter struct {
 	FileLogConfig
 	*log.Logger
-	mw               *MuxWriter
+	mw               *muxWriter
 	maxLinesCurLines int
 	maxsizeCurSize   int
 	dailyOpenDate    int
@@ -43,14 +43,14 @@ type FileLogWriter struct {
 }
 
 // write to os.File.
-func (l *MuxWriter) Write(b []byte) (int, error) {
+func (l *muxWriter) Write(b []byte) (int, error) {
 	l.Lock()
 	defer l.Unlock()
 	return l.fd.Write(b)
 }
 
 // set os.File in writer.
-func (l *MuxWriter) SetFd(fd *os.File) {
+func (l *muxWriter) SetFd(fd *os.File) {
 	if l.fd != nil {
 		l.fd.Close()
 	}
@@ -58,8 +58,8 @@ func (l *MuxWriter) SetFd(fd *os.File) {
 }
 
 // create a FileLogWriter returning as LoggerInterface.
-func newFileWriter() *FileLogWriter {
-	w := &FileLogWriter{
+func newFileWriter() *fileLogWriter {
+	w := &fileLogWriter{
 		FileLogConfig: FileLogConfig{
 			Path:     "",
 			Filename: "",
@@ -72,14 +72,14 @@ func newFileWriter() *FileLogWriter {
 		},
 	}
 	// use MuxWriter instead direct use os.File for lock write when rotate
-	w.mw = new(MuxWriter)
+	w.mw = new(muxWriter)
 	// set MuxWriter as Logger's io.Writer
 	w.Logger = log.New(w.mw, "", 0)
 	return w
 }
 
 // Init file logger.
-func (w *FileLogWriter) Init(conf FileLogConfig) (err error) {
+func (w *fileLogWriter) Init(conf FileLogConfig) (err error) {
 	w.FileLogConfig = conf
 
 	if len(w.Filename) == 0 {
@@ -90,7 +90,7 @@ func (w *FileLogWriter) Init(conf FileLogConfig) (err error) {
 }
 
 // start file logger. create log file and set to locker-inside file writer.
-func (w *FileLogWriter) startLogger() error {
+func (w *fileLogWriter) startLogger() error {
 	fd, err := w.createLogFile()
 	if err != nil {
 		return err
@@ -101,7 +101,7 @@ func (w *FileLogWriter) startLogger() error {
 	return err
 }
 
-func (w *FileLogWriter) docheck(size int) {
+func (w *fileLogWriter) docheck(size int) {
 	w.startLock.Lock()
 	defer w.startLock.Unlock()
 	if w.Rotate && ((w.MaxLines > 0 && w.maxLinesCurLines >= w.MaxLines) ||
@@ -117,7 +117,7 @@ func (w *FileLogWriter) docheck(size int) {
 }
 
 // write logger message into file.
-func (w *FileLogWriter) WriteMsg(msg string, level int) error {
+func (w *fileLogWriter) WriteMsg(msg string, level int) error {
 	if level > w.Level {
 		return nil
 	}
@@ -127,13 +127,13 @@ func (w *FileLogWriter) WriteMsg(msg string, level int) error {
 	return nil
 }
 
-func (w *FileLogWriter) createLogFile() (*os.File, error) {
+func (w *fileLogWriter) createLogFile() (*os.File, error) {
 	// Open the log file
 	fd, err := os.OpenFile(w.Filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0660)
 	return fd, err
 }
 
-func (w *FileLogWriter) initFd() error {
+func (w *fileLogWriter) initFd() error {
 	fd := w.mw.fd
 	finfo, err := fd.Stat()
 	if err != nil {
@@ -155,7 +155,7 @@ func (w *FileLogWriter) initFd() error {
 
 // DoRotate means it need to write file in new file.
 // new file name like xx.log.2013-01-01.2
-func (w *FileLogWriter) DoRotate() error {
+func (w *fileLogWriter) DoRotate() error {
 	_, err := os.Lstat(w.Filename)
 	if err == nil { // file exists
 		// Find the next available number
@@ -196,7 +196,7 @@ func (w *FileLogWriter) DoRotate() error {
 	return nil
 }
 
-func (w *FileLogWriter) deleteOldLog() {
+func (w *fileLogWriter) deleteOldLog() {
 	dir := filepath.Dir(w.Filename)
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) (returnErr error) {
 		defer func() {
@@ -215,13 +215,13 @@ func (w *FileLogWriter) deleteOldLog() {
 }
 
 // destroy file logger, close file writer.
-func (w *FileLogWriter) Destroy() {
+func (w *fileLogWriter) Destroy() {
 	w.mw.fd.Close()
 }
 
 // flush file logger.
 // there are no buffering messages in file logger in memory.
 // flush file means sync file from disk.
-func (w *FileLogWriter) Flush() {
+func (w *fileLogWriter) Flush() {
 	w.mw.fd.Sync()
 }

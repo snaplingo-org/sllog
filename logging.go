@@ -6,17 +6,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type GormLogger struct{}
+type gormlogger struct{}
 
-type Sllog struct{}
+type sllogger struct{}
 
 var (
-	sllog      = &Sllog{}
-	gormLogger = &GormLogger{}
+	sllog      = &sllogger{}
+	gormLogger = &gormlogger{}
 	logger     = logrus.New()
 )
 
-func (*GormLogger) Print(v ...interface{}) {
+func (*gormlogger) Print(v ...interface{}) {
 	if v[0] == "sql" {
 		logger.WithFields(logrus.Fields{"module": "gorm", "type": "sql"}).Print(v[:])
 	}
@@ -26,12 +26,12 @@ func (*GormLogger) Print(v ...interface{}) {
 }
 
 // GetLogger get sllog logger
-func GetLogger() *Sllog {
+func GetLogger() *sllogger {
 	return sllog
 }
 
 // GetGormLogger get gorm logger
-func GetGormLogger() *GormLogger {
+func GetGormLogger() *gormlogger {
 	return gormLogger
 }
 
@@ -64,12 +64,12 @@ func Init(config FileLogConfig) {
 }
 
 // Debug logs a message with debug log level.
-func (sllog *Sllog) Debug(msg interface{}) {
+func (sllog *sllogger) Debug(msg interface{}) {
 	logger.Debug(msg)
 }
 
 // DebugWithF logs a message with Debug log level.
-func (sllog *Sllog) DebugWithF(json *map[string]interface{}, msg interface{}) {
+func (sllog *sllogger) DebugWithF(json *map[string]interface{}, msg interface{}) {
 	if json == nil {
 		logger.Debug(msg)
 	} else {
@@ -78,12 +78,12 @@ func (sllog *Sllog) DebugWithF(json *map[string]interface{}, msg interface{}) {
 }
 
 // Debugf logs a formatted message with debug log level.
-func (sllog *Sllog) Debugf(msg string, args ...interface{}) {
+func (sllog *sllogger) Debugf(msg string, args ...interface{}) {
 	logger.Debugf(msg, args...)
 }
 
 // DebugfWithF logs a message with Debug log level.
-func (sllog *Sllog) DebugfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
+func (sllog *sllogger) DebugfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
 	if json == nil {
 		logger.Debugf(msg, args...)
 	} else {
@@ -92,12 +92,12 @@ func (sllog *Sllog) DebugfWithF(json *map[string]interface{}, msg string, args .
 }
 
 // Info logs a message with info log level.
-func (sllog *Sllog) Info(msg interface{}) {
+func (sllog *sllogger) Info(msg interface{}) {
 	logger.Info(msg)
 }
 
 // InfoWithF logs a message with info log level.
-func (sllog *Sllog) InfoWithF(json *map[string]interface{}, msg interface{}) {
+func (sllog *sllogger) InfoWithF(json *map[string]interface{}, msg interface{}) {
 	if json == nil {
 		logger.Info(msg)
 	} else {
@@ -106,12 +106,12 @@ func (sllog *Sllog) InfoWithF(json *map[string]interface{}, msg interface{}) {
 }
 
 // Infof logs a formatted message with info log level.
-func (sllog *Sllog) Infof(msg string, args ...interface{}) {
+func (sllog *sllogger) Infof(msg string, args ...interface{}) {
 	logger.Infof(msg, args...)
 }
 
 // InfofWithF logs a message with info log level.
-func (sllog *Sllog) InfofWithF(json *map[string]interface{}, msg string, args ...interface{}) {
+func (sllog *sllogger) InfofWithF(json *map[string]interface{}, msg string, args ...interface{}) {
 	if json == nil {
 		logger.Infof(msg, args...)
 	} else {
@@ -120,12 +120,12 @@ func (sllog *Sllog) InfofWithF(json *map[string]interface{}, msg string, args ..
 }
 
 // Warn logs a message with warn log level.
-func (sllog *Sllog) Warn(msg interface{}) {
+func (sllog *sllogger) Warn(msg interface{}) {
 	logger.Warn(msg)
 }
 
 // WarnWithF logs a message with info log level.
-func (sllog *Sllog) WarnWithF(json *map[string]interface{}, msg interface{}) {
+func (sllog *sllogger) WarnWithF(json *map[string]interface{}, msg interface{}) {
 	if json == nil {
 		logger.Warn(msg)
 	} else {
@@ -134,12 +134,12 @@ func (sllog *Sllog) WarnWithF(json *map[string]interface{}, msg interface{}) {
 }
 
 // Warnf logs a formatted message with warn log level.
-func (sllog *Sllog) Warnf(msg string, args ...interface{}) {
+func (sllog *sllogger) Warnf(msg string, args ...interface{}) {
 	logger.Warnf(msg, args...)
 }
 
 // WarnfWithF logs a message with warn log level.
-func (sllog *Sllog) WarnfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
+func (sllog *sllogger) WarnfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
 	if json == nil {
 		logger.Warnf(msg, args...)
 	} else {
@@ -148,12 +148,12 @@ func (sllog *Sllog) WarnfWithF(json *map[string]interface{}, msg string, args ..
 }
 
 // Error logs a message with error log level.
-func (sllog *Sllog) Error(msg interface{}) {
+func (sllog *sllogger) Error(msg interface{}) {
 	logger.Error(msg)
 }
 
 // ErrorWithF logs a message with error log level.
-func (sllog *Sllog) ErrorWithF(json *map[string]interface{}, msg interface{}) {
+func (sllog *sllogger) ErrorWithF(json *map[string]interface{}, msg interface{}) {
 	if json == nil {
 		logger.Error(msg)
 	} else {
@@ -162,12 +162,12 @@ func (sllog *Sllog) ErrorWithF(json *map[string]interface{}, msg interface{}) {
 }
 
 // Errorf logs a formatted message with error log level.
-func (sllog *Sllog) Errorf(msg string, args ...interface{}) {
+func (sllog *sllogger) Errorf(msg string, args ...interface{}) {
 	logger.Errorf(msg, args...)
 }
 
 // ErrorfWithF logs a message with error log level.
-func (sllog *Sllog) ErrorfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
+func (sllog *sllogger) ErrorfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
 	if json == nil {
 		logger.Errorf(msg, args...)
 	} else {
@@ -176,12 +176,12 @@ func (sllog *Sllog) ErrorfWithF(json *map[string]interface{}, msg string, args .
 }
 
 // Fatal logs a message with fatal log level.
-func (sllog *Sllog) Fatal(msg interface{}) {
+func (sllog *sllogger) Fatal(msg interface{}) {
 	logger.Fatal(msg)
 }
 
 // FatalWithF logs a message with fatal log level.
-func (sllog *Sllog) FatalWithF(json *map[string]interface{}, msg interface{}) {
+func (sllog *sllogger) FatalWithF(json *map[string]interface{}, msg interface{}) {
 	if json == nil {
 		logger.Fatal(msg)
 	} else {
@@ -190,12 +190,12 @@ func (sllog *Sllog) FatalWithF(json *map[string]interface{}, msg interface{}) {
 }
 
 // Fatalf logs a formatted message with fatal log level.
-func (sllog *Sllog) Fatalf(msg string, args ...interface{}) {
+func (sllog *sllogger) Fatalf(msg string, args ...interface{}) {
 	logger.Fatalf(msg, args...)
 }
 
 // FatalfWithF logs a message with fatal log level.
-func (sllog *Sllog) FatalfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
+func (sllog *sllogger) FatalfWithF(json *map[string]interface{}, msg string, args ...interface{}) {
 	if json == nil {
 		logger.Fatalf(msg, args...)
 	} else {
